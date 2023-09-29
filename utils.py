@@ -1,7 +1,7 @@
 import torch
 import math
 import os
-Clp_max = [1, 2, 3]
+Clp_max = [2, 2, 2]
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
@@ -174,20 +174,15 @@ def load_snn_weights(model, path):
         if k in dst_dict.keys():
             dst_dict[k] = torch.tensor(dst_dict[k], dtype=torch.float32)
             v = torch.tensor(v, dtype=torch.float32)
-            # if 'weight' in k and ('stage1' in k or 'stage4' in k):
-            #     reshape_dict[k] = torch.nn.Parameter(v.reshape(dst_dict[k].shape) * Clp_max[2])
-            # if 'weight' in k and ('stage4' in k or 'stage3_second' in k):
-            #     reshape_dict[k] = torch.nn.Parameter(v.reshape(dst_dict[k].shape) * Clp_max[1])
             if 'weight' in k and 'stage2' in k:
                 reshape_dict[k] = torch.nn.Parameter(v.reshape(dst_dict[k].shape) * Clp_max[1])
             elif 'weight' in k and 'stage3' in k:
                 reshape_dict[k] = torch.nn.Parameter(v.reshape(dst_dict[k].shape) * Clp_max[0])
             elif 'weight' in k:
-                reshape_dict[k] = torch.nn.Parameter(v.reshape(dst_dict[k].shape) * 3)
+                reshape_dict[k] = torch.nn.Parameter(v.reshape(dst_dict[k].shape) * 2)
             else:
                 reshape_dict[k] = torch.nn.Parameter(v.reshape(dst_dict[k].shape))
-            reshape_dict['gap.weight'] = dst_dict['gap.weight'] *3
-            # reshape_dict['avgpool.weight'] = dst_dict['avgpool.weight'] *Clp_max
+            reshape_dict['gap.weight'] = dst_dict['gap.weight'] *2
     unwrap_model(model).load_state_dict(reshape_dict, strict=False)
     print('=================== loaded from', path)
 
