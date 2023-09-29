@@ -3,8 +3,8 @@ import torch.utils.checkpoint as checkpoint
 from se_block import SEBlock
 import torch
 import numpy as np
-Clp_max = 3
-T = 8
+Clp_max = 2
+T = 4
 
 class PoolingCQ(nn.Module):
     def __init__(self, min_val, max_val,constant=100):
