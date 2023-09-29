@@ -14,7 +14,7 @@ from train.logger import create_logger
 from utils import load_checkpoint, save_checkpoint, get_grad_norm, auto_resume_helper, reduce_tensor, save_latest, update_model_ema, unwrap_model, load_snn_weights
 import copy
 from train.optimizer import build_optimizer
-from repvggplus_snn_reduce import create_RepVGGplus_by_name
+from repvggplus_snn import create_RepVGGplus_by_name
 
 try:
     # noinspection PyUnresolvedReferences
