@@ -5,28 +5,18 @@ import torch
 import numpy as np
 import catCuda
 import catSNN
-Clp_max = 3
-T = 8
-T_reduce = 24
+Clp_max = 2
+T = 4
+T_reduce = 8
 
 def get_spike(x_out,threshold = 1, p=4):
     spike_out = []
-    current_potential, tmp_potential = x_out, x_out
     for i in range(p):
-        spike_out.append(catCuda.getSpikes(current_potential.type(torch.FloatTensor).cuda(), threshold - 0.001))
-        if i == p-1:
-            break
-        tmp_potential = torch.where(current_potential > threshold, current_potential - threshold, current_potential)
-        current_potential = tmp_potential + x_out
+        input_i = (i* x_out) % (threshold-0.001) + x_out
+        new_spike = catCuda.getSpikes(input_i.type(torch.FloatTensor).cuda(), threshold - 0.001)
+        spike_out.append(new_spike)
     x=torch.cat(spike_out, dim=-1)
     return x
-
-def create_spike_input_cuda(input,T):
-    spikes_data = [input for _ in range(T)]
-    out = torch.stack(spikes_data, dim=-1).type(torch.FloatTensor).cuda() #float
-    # 1/2.5:max_1-0.0001; 8/10 : max_1-0.001 ; 16/20 : max_1-0.0001 ; 32/40 : max_1-0.001 ;
-    out = catCuda.getSpikes(out, Clp_max - 0.001)
-    return out
 
 class RepVGGplusBlock(nn.Module):
 
